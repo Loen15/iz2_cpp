@@ -341,3 +341,4 @@ int start(char* predicat_file,char* variables_file){
     fclose(predicat);
     fclose(file);
     return count;
+}
