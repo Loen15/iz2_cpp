@@ -26,5 +26,5 @@ int check_vars(predicate* tree, int var);
 int copy_tree(predicate* node,predicate* tree);
 int check_var(predicate* tree, int var);
 int free_memor(predicate* tree);
-int start();
+int start(char* predicat,char* variables);
 #endif  //IZ2_STAT_LIB_H_

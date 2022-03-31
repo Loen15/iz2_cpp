@@ -404,8 +404,8 @@ int free_memor(predicate* tree){
     free(tree);
     return SUCCESS;
 }
-int start(){
-    FILE* predicat = fopen("../iz2/predicat.txt","r");
+int start(char* predicat_file,char* variables_file){
+    FILE* predicat = fopen(predicat_file,"r");
     if(!predicat){
         printf("dont open predicat");
         return FAILURE;
@@ -430,7 +430,7 @@ int start(){
     }
     printf("predicate's  tree created\n");
     int var;
-    FILE* file = fopen("../iz2/variables.txt", "r");
+    FILE* file = fopen(variables_file, "r");
     if(!file){
         printf("dont open variables");
         return FAILURE;
@@ -444,7 +444,7 @@ int start(){
         printf("check var %d, so count %d\n",var,count);
         var = read_var(file);
     }
-    free(tree);
+    free_memor(tree);
     free(str);
     printf("final count: %d\n",count);
     fclose(predicat);

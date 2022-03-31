@@ -2,6 +2,5 @@
 #include "static_lib/stat_lib.h"
 
 int main() {
-    printf("test\n");
-    return start();
+    return start("/iz2_cpp/iz2/predicat.txt","/iz2_cpp/iz2/variables.txt");
 }
