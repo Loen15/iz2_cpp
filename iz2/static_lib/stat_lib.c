@@ -102,12 +102,15 @@ int fill_predicate(char *str,predicate* tree){
         return FAILURE;
     }
     int flag;
+    printf("in fp count=%d \n",count);
     flag = create_predicate(str,tree,count);
     printf("Current predicat: ");
     print_tree(tree,count);
+    printf("\n");
     return flag;
 }
 int create_predicate(char *str,predicate* node,int count){
+    printf("create predicate with str: -%s- count %d\n",str,count);
     if (count < 1){
         return FAILURE;
     }
@@ -199,16 +202,16 @@ int create_predicate(char *str,predicate* node,int count){
     predicate* left = malloc(sizeof(predicate));
     node->right=right;
     node->left =left;
-    char* right_str= malloc(sizeof(char)*(length-i+1));
-    for(size_t j=i;j<length+1;j++){
+    char* right_str= malloc(sizeof(char)*(length-i+2));
+    for(size_t j=i;j<length+2;j++){
         right_str[j-i]=str[j];
     }
     i-=4;
-    char* left_str = malloc(sizeof(char)* i);
-    for(size_t j=0;j<i-1;j++){
+    char* left_str = malloc(sizeof(char)* (i+1));
+    for(size_t j=0;j<i;j++){
         left_str[j]=str[j];
     }
-    left_str[i-1]='\0';
+    left_str[i]='\0';
     create_predicate(left_str,left,count - 1);
     create_predicate(right_str,right,1);
     return SUCCESS;
@@ -231,8 +234,11 @@ int count_var(char* str){
         if (str[i]=='('){
             count++;
         }
+        printf("Counting... str[i]:%c count:%d \n",str[i],count);
         i++;
     }
+    
+    printf("Counted! count:%d \n",count);
     return count;
 }
 //  считываем числа
@@ -399,33 +405,49 @@ int free_memor(predicate* tree){
     return SUCCESS;
 }
 int start(){
-
-    FILE* predicat = fopen("../predicat.txt","r");
+    FILE* predicat = fopen("../iz2/predicat.txt","r");
+    if(!predicat){
+        printf("dont open predicat");
+        return FAILURE;
+    }
+    printf("predicat.txt opend\n");
     char* str = read_predicate(predicat);
     if (str == FAILURE){
+        fclose(predicat);
         return FAILURE;
     }
+    printf("curr predicat: %s\n",str);
     if(!check(str)){
+        fclose(predicat);
         return FAILURE;
     }
+    printf("check success\n");
     predicate* tree = malloc(sizeof(predicate));
     if(!fill_predicate(str,tree)){
+        printf("don't crete predicate's tree\n");
+        fclose(predicat);
         return FAILURE;
     }
+    printf("predicate's  tree created\n");
     int var;
-    FILE* file = fopen("../variables.txt", "r");
-    if(file == NULL){
+    FILE* file = fopen("../iz2/variables.txt", "r");
+    if(!file){
         printf("dont open variables");
+        return FAILURE;
     }
+    printf("variables.txt opend\n");
     var = read_var(file);
 
     int count=0;
     while (var!=FAILURE) {
         count +=check_vars(tree,var);
+        printf("check var %d, so count %d\n",var,count);
         var = read_var(file);
     }
     free(tree);
-
-    printf("\ncount: %d",count);
+    free(str);
+    printf("final count: %d\n",count);
+    fclose(predicat);
+    fclose(file);
     return count;
 }
