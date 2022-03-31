@@ -1,4 +1,3 @@
-
 #include "stat_lib.h"
 
 #define FAILURE 0
@@ -62,31 +61,31 @@ int check (char* str) {
                 printf("not _ after X or incorrect register");
                 return FAILURE;
             }
-                while (str[i] >= '0' && str[i] <= '9'){
-                    i++;
+            while (str[i] >= '0' && str[i] <= '9'){
+                i++;
+            }
+            if (str[i] == ')')
+            {
+                if  (str[i+1] == ' '){
+                    i+=2;
+                    if ((((str[i] == '&') && (str[i+1] == '&')) || ((str[i] == '|') && (str[i+1] == '|'))) && (str[i+2] == ' '))
+                        i+=3;
+                    else return FAILURE;
                 }
-                if (str[i] == ')')
-                {
-                   if  (str[i+1] == ' '){
-                       i+=2;
-                       if ((((str[i] == '&') && (str[i+1] == '&')) || ((str[i] == '|') && (str[i+1] == '|'))) && (str[i+2] == ' '))
-                           i+=3;
-                       else return FAILURE;
-                   }
-                   else{
-                       if (str[i+1] == '\0') {
-                           i++;
-                       }
-                       else {
-                           printf("not _ after )");
-                           return FAILURE;
-                       }
-                   }
+                else{
+                    if (str[i+1] == '\0') {
+                        i++;
+                    }
+                    else {
+                        printf("not _ after )");
+                        return FAILURE;
+                    }
                 }
-                else {
-                    printf("not ) after count");
-                    return FAILURE;
-                }
+            }
+            else {
+                printf("not ) after count");
+                return FAILURE;
+            }
         }
         else{
             printf("not (");
@@ -96,149 +95,101 @@ int check (char* str) {
     return SUCCESS;
 }
 //  заполняем дерево предиката
-int fill_predicate(char *str,predicate* tree){
-    int count = count_var(str);
-    if (count == FAILURE){
-        return FAILURE;
-    }
-    int flag;
-    printf("in fp count=%d \n",count);
-    flag = create_predicate(str,tree,count);
-    printf("Current predicat: ");
-    print_tree(tree,count);
-    printf("\n");
-    return flag;
-}
-int create_predicate(char *str,predicate* node,int count){
-    printf("create predicate with str: -%s- count %d\n",str,count);
-    if (count < 1){
-        return FAILURE;
-    }
+int fill_predikate(char *str,predikate* predikat){
+    size_t count = count_var(str);
+    predikat->comparison = malloc(sizeof(char) * count);
+    predikat->value = malloc(sizeof(int ) *count);
+    predikat->logic = malloc(sizeof(char) * count);
+    size_t length;
     size_t i =0;
-    if (count == 1) {
-        while (str[i] != ' ') {
+    char* pred;
+    printf("predicate:");
+    for (size_t j = 0;j<count;j++){
+        length=0;
+        while (str[i]!=')'){
             i++;
+            length++;
         }
+        pred = malloc(sizeof(char) * (length+2));
+        for (size_t k = 0;k<length+1;k++){
+            pred[k]=str[i-length+k];
+        }
+        pred[length+1]='\0';
+        create_predikate(pred,predikat,(int)j);
         i++;
-        if ((str[i] == '<') && (str[i + 1] == ' ')) {
-            node->data = malloc(sizeof(char) * 2);
-            node->data[0] = '<';
-            node->data[1] = '\0';
+        if(str[i]!='\0') {
+            i++;
+            if (str[i] == '&') {
+                printf(" && ");
+                predikat->logic[j] = 1;
+            } else {
+                printf(" || ");
+                predikat->logic[j] = 2;
+            }
+        }
+        i+=3;
+    }
+    printf("\n");
+    predikat->logic[count-1] = 3;
+    return  SUCCESS;
+}
+int create_predikate(char *str,predikate* node,int count){
+    size_t i =3;
+    if ((str[i] == '<') && (str[i + 1] == ' ')) {
+        printf("(X < ");
+        node->comparison[count]=1;
+        i += 2;
+    } else {
+        if ((str[i] == '>') && (str[i + 1] == ' ')) {
+            printf("(X > ");
+            node->comparison[count]=2;
             i += 2;
         } else {
-            if ((str[i] == '>') && (str[i + 1] == ' ')) {
-                node->data = malloc(sizeof(char) * 2);
-                node->data[0] = '>';
-                node->data[1] = '\0';
+            if ((str[i] == '=') && (str[i + 1] == ' ')) {
+                printf("(X = ");
+                node->comparison[count]=3;
                 i += 2;
             } else {
-                if ((str[i] == '=') && (str[i + 1] == ' ')) {
-                    node->data = malloc(sizeof(char) * 2);
-                    node->data[0] = '=';
-                    node->data[1] = '\0';
-                    i += 2;
+                if ((str[i] == '<') && (str[i + 1] == '=')) {
+                    printf("(X <= ");
+                    node->comparison[count]=4;
+                    i += 3;
                 } else {
-                    if ((str[i] == '<') && (str[i + 1] == '=')) {
-                        node->data = malloc(sizeof(char) * 3);
-                        node->data[0] = '<';
-                        node->data[1] = '=';
-                        node->data[2] = '\0';
+                    if ((str[i] == '>') && (str[i + 1] == '=')) {
+                        printf("(X >= ");
+                        node->comparison[count]=5;
                         i += 3;
-                    } else {
-                        if ((str[i] == '>') && (str[i + 1] == '=')) {
-                            node->data = malloc(sizeof(char) * 3);
-                            node->data[0] = '>';
-                            node->data[1] = '=';
-                            node->data[2] = '\0';
-                            i += 3;
-                        }
                     }
                 }
             }
         }
-        predicate* left = malloc(sizeof(predicate)) ;
-        left->left=NULL;
-        left->right=NULL;
-        left->data = malloc(sizeof(char)* 2);
-        left->data[0]='X';
-        left->data[1]='\0';
-        node->left = left;
-        predicate* right = malloc(sizeof(predicate));
-        right->left=NULL;
-        right->right=NULL;
-        size_t tmp = 0;
-        while (str[i+tmp] != ')'){
-            tmp++;
-        }
-        right->data = malloc(sizeof(char)*(tmp+1));
-        for (size_t j=0;j<tmp;j++){
-            right->data[j]=str[i+j];
-        }
-        right->data[tmp]='\0';
-        node->right= right;
-        return SUCCESS;
-
     }
-    while (str[i] != '\0'){
-        i++;
+    size_t length = 0;
+    while (str[i+length]!=')'){
+        length++;
     }
-    size_t length = i;
-    while(str[i] != '('){
-        i--;
+    char* buff= malloc(sizeof(char) * (length+1));
+    for(size_t j = 0;j<length;j++){
+        buff[j]=str[i+j];
     }
-    if (str[i-2] == '&'){
-        node->data = malloc(sizeof(char)* 3);
-        node->data[0]='&';
-        node->data[1]='&';
-        node->data[2]='\0';
-    }
-    if (str[i-2] == '|'){
-        node->data = malloc(sizeof(char)* 3);
-        node->data[0]='|';
-        node->data[1]='|';
-        node->data[2]='\0';
-    }
-    predicate* right = malloc(sizeof(predicate));
-    predicate* left = malloc(sizeof(predicate));
-    node->right=right;
-    node->left =left;
-    char* right_str= malloc(sizeof(char)*(length-i+2));
-    for(size_t j=i;j<length+2;j++){
-        right_str[j-i]=str[j];
-    }
-    i-=4;
-    char* left_str = malloc(sizeof(char)* (i+1));
-    for(size_t j=0;j<i;j++){
-        left_str[j]=str[j];
-    }
-    left_str[i]='\0';
-    create_predicate(left_str,left,count - 1);
-    create_predicate(right_str,right,1);
-    return SUCCESS;
-}
-void print_tree(predicate* tree,int count){
-    if (count == 1){
-        printf("(%s %s %s)",tree->left->data,tree->data,tree->right->data);
-    }else{
-        print_tree(tree->left,count-1);
-        printf(" %s ",tree->data);
-        print_tree(tree->right,1);
-    }
-
+    buff[length]='\0';
+    node->value[count] = atoi(buff);
+    printf("%d)",node->value[count]);
+    return  SUCCESS;
 }
 //  считаем количество x
-int count_var(char* str){
-    int count = 0;
+size_t count_var(char* str){
+    size_t count = 0;
     size_t i = 0;
     while (str[i]!='\0'){
         if (str[i]=='('){
             count++;
         }
-        printf("Counting... str[i]:%c count:%d \n",str[i],count);
+//        printf("Counting... str[i]:%c count:%d \n",str[i],count);
         i++;
     }
-    
-    printf("Counted! count:%d \n",count);
+
+//    printf("Counted! count:%d \n",count);
     return count;
 }
 //  считываем числа
@@ -268,141 +219,78 @@ int read_var(FILE* file){
         buff = (char)fgetc(file);
     }
     int var = atoi(str);
-    /*free(str);
-    free(tmp);*/
     return var;
 }
 
 //  проверяем подходит ли число
-int check_vars(predicate* tree, int var){
-    predicate* copy = malloc(sizeof(predicate));
-    copy_tree(copy,tree);
-    return check_var(copy,var);
+int check_vars(predikate* predikat,int var,int count){
+//    printf("count in cheking %d\n",count);
+    int prev = check_var(predikat,var,0);
+    int curr;
+    for (int i = 1;i<count;i++){
+        curr = check_var(predikat,var,i);
+        // 1 - &&
+        // 2 - ||
+        if (predikat->logic[i-1]== 1){
+//            printf("%d && %d?\n",prev,curr);
+            if (prev!=1 || curr!=1){
+                return 0;
+            }
+        }
+        if (predikat->logic[i-1]== 2){
+//            printf("%d || %d?\n",prev,curr);
+            if (prev==0 && curr==0){
+                return 0;
+            }
+        }
+        prev = 1;
+    }
+    return 1;
 }
-int copy_tree(predicate* node,predicate* tree){
-    if (tree->left!=NULL){
-        predicate* left = malloc(sizeof(predicate));
-        node->left =left;
-        copy_tree(node->left,tree->left);
+int check_var(predikate* predikat,int var,int count){
+    // 1 - <
+// 2 - >
+// 3 - =
+// 4 - <=
+// 5 - >=
+    if (predikat->comparison[count] == 1){
+//        printf("%d < %d?\n",var,predikat->value[count]);
+        if (var < predikat->value[count]){
+            return 1;
+        }
+        else return 0;
     }
-    else{
-        node->left=NULL;
+    if (predikat->comparison[count] == 2){
+//        printf("%d > %d?\n",var,predikat->value[count]);
+        if (var > predikat->value[count]){
+            return 1;
+        }
+        else return 0;
     }
-    if (tree->right!=NULL){
-        predicate* right = malloc(sizeof(predicate));
-        node->right=right;
-        copy_tree(node->right,tree->right);
-    }
-    else{
-        node->right=NULL;
-    }
-    size_t i =0;
-    while(tree->data[i]!='\0'){
-        i++;
-    }
-    node->data = malloc(sizeof(char) * (i+1));
-    for (size_t j=0;j< i+1;j++){
-        node->data[j]=tree->data[j];
-    }
-    return SUCCESS;
-}
-int check_var(predicate* tree,int var){
-    if(tree->right->right!=NULL){
-        check_var(tree->right,var);
-    }
+    if (predikat->comparison[count] == 3){
 
-        int tmp = atoi(tree->right->data);
-        if (tree->data[0]=='>' && tree->data[1]=='\0'){
-            //printf("\n%d > %d\n",var, tmp);
-            if (var > tmp){
-                tree->data[0]='1';
-                tree->data[1]='\0';
-            }
-            else{
-                tree->data[0]='0';
-                tree->data[1]='\0';
-            }
+//        printf("%d = %d?\n",var,predikat->value[count]);
+        if (var == predikat->value[count]){
+            return 1;
         }
-        if (tree->data[0]=='<' && tree->data[1]=='\0'){
-            //printf("\n%d < %d\n",var, tmp);
-            if (var < tmp){
-                tree->data[0]='1';
-                tree->data[1]='\0';
-            }
-            else{
-                tree->data[0]='0';
-                tree->data[1]='\0';
-            }
-        }
-        if (tree->data[0]=='=' && tree->data[1]=='\0'){
-            //printf("\n%d = %d\n",var, tmp);
-            if (var == tmp){
-                tree->data[0]='1';
-                tree->data[1]='\0';
-            }
-            else{
-                tree->data[0]='0';
-                tree->data[1]='\0';
-            }
-        }
-        if (tree->data[0]=='>' && tree->data[1]=='='){
-            //printf("\n%d >= %d\n",var, tmp);
-            if (var >= tmp){
-                tree->data[0]='1';
-                tree->data[1]='\0';
-            }
-            else{
-                tree->data[0]='0';
-                tree->data[1]='\0';
-            }
-        }
-        if (tree->data[0]=='<' && tree->data[1]=='='){
-            //printf("\n%d <= %d\n",var, tmp);
-            if (var <= tmp){
-                tree->data[0]='1';
-                tree->data[1]='\0';
-            }
-            else{
-                tree->data[0]='0';
-                tree->data[1]='\0';
-            }
-        }
-        if (tree->data[0]=='&'){
-            check_var(tree->left,var);
-            //printf("\n%c && %c\n",tree->left->data[0], tree->right->data[0]);
-            if (tree->left->data[0]=='1' && tree->right->data[0]=='1'){
-                tree->data[0]='1';
-                tree->data[1]='\0';
-            }
-            else{
-                tree->data[0]='0';
-                tree->data[1]='\0';
-            }
-        }
-        if (tree->data[0]=='|'){
-            check_var(tree->left,var);
-            //printf("\n%c || %c\n",tree->left->data[0], tree->right->data[0]);
-            if (tree->left->data[0]=='1' || tree->right->data[0]=='1'){
-                tree->data[0]='1';
-                tree->data[1]='\0';
-            }
-            else{
-                tree->data[0]='0';
-                tree->data[1]='\0';
-            }
-        }
-    return atoi(tree->data);
-}
-int free_memor(predicate* tree){
-    if(tree->left!=NULL){
-        free_memor(tree->left);
+
+        else return 0;
     }
-    if(tree->right!=NULL){
-        free_memor(tree->right);
+    if (predikat->comparison[count] == 4){
+//        printf("%d <= %d?\n",var,predikat->value[count]);
+        if (var <= predikat->value[count]){
+            return 1;
+        }
+        else return 0;
     }
-    free(tree->data);
-    free(tree);
-    return SUCCESS;
+    if (predikat->comparison[count] == 5){
+//        printf("%d >= %d?\n",var,predikat->value[count]);
+        if (var >= predikat->value[count]){
+            return 1;
+        }
+        else return 0;
+    }
+    return  FAILURE;
 }
 int start(char* predicat_file,char* variables_file){
     FILE* predicat = fopen(predicat_file,"r");
@@ -422,13 +310,9 @@ int start(char* predicat_file,char* variables_file){
         return FAILURE;
     }
     printf("check success\n");
-    predicate* tree = malloc(sizeof(predicate));
-    if(!fill_predicate(str,tree)){
-        printf("don't crete predicate's tree\n");
-        fclose(predicat);
-        return FAILURE;
-    }
-    printf("predicate's  tree created\n");
+    predikate* predikat = malloc(sizeof(predikate));
+    fill_predikate(str,predikat);
+    printf("predicate created\n");
     int var;
     FILE* file = fopen(variables_file, "r");
     if(!file){
@@ -437,17 +321,23 @@ int start(char* predicat_file,char* variables_file){
     }
     printf("variables.txt opend\n");
     var = read_var(file);
-
+    int length=1;
+    while(predikat->logic[length-1]!=3){
+        //printf("%d",predikat->logic[length-1]);
+        length++;
+    }
     int count=0;
     while (var!=FAILURE) {
-        count +=check_vars(tree,var);
+        count +=check_vars(predikat,var,length);
         printf("check var %d, so count %d\n",var,count);
         var = read_var(file);
     }
-    free_memor(tree);
+    free(predikat->comparison);
+    free(predikat->value);
+    free(predikat->logic);
+    free(predikat);
     free(str);
     printf("final count: %d\n",count);
     fclose(predicat);
     fclose(file);
     return count;
-}
