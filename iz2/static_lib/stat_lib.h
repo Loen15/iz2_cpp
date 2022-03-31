@@ -2,8 +2,8 @@
 #define IZ2_STAT_LIB_H_
 #include <stdio.h>
 #include <stdlib.h>
-typedef struct predikate predikate;
-struct  predikate{
+#include <pthread.h>
+typedef struct {
     char* comparison;
 // 1 - <
 // 2 - >
@@ -15,7 +15,8 @@ struct  predikate{
 // 1 - &&
 // 2 - ||
 // 3 - end
-};
+} predikate;
+
 //  считываем предикат
 char* read_predicate(FILE* file);
 //  проверяем корректность
@@ -30,5 +31,6 @@ int read_var(FILE* file);
 //  проверяем подходит ли число
 int check_vars(predikate* predikat,int var,int count);
 int check_var(predikate* predikat,int var,int count);
-int start(char* predicat,char* variables);
+//  стартуем
+int start(char* predicat_file,char* variables_file);
 #endif  //IZ2_STAT_LIB_H_
