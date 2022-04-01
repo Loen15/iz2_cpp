@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <unistd.h>
+
 typedef struct {
     char* comparison;
 // 1 - <
@@ -17,21 +19,23 @@ typedef struct {
 // 3 - end
 } predikate;
 
+typedef struct {
+    size_t count_var; // кол-во чисел
+    predikate* predikat;
+    int* vars;
+} arges;
+
+typedef struct {
+    arges* var_pred;
+    int i; // номер потока
+    int n; // кол-во потоков
+} args;
+
 //потоки
 typedef struct {
     pthread_mutex_t mutex; // mutex for value protection
     int value; // protected value
 } data_t;
-
-typedef struct {
-    int* data;
-    predikate* predikat;
-    int i; // номер потока
-    int n; // кол-во потоков
-    size_t count_var; // кол-во чисел
-} arges;
-// common object; mutex is initialized statically
-data_t data = {PTHREAD_MUTEX_INITIALIZER, 0};
 
 void *thread_routine(void *arg);
 

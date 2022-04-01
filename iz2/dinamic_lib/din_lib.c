@@ -2,24 +2,28 @@
 
 #define FAILURE 0
 #define SUCCESS 1
+// common object; mutex is initialized statically
+data_t data = {PTHREAD_MUTEX_INITIALIZER, 0};
 
-void *thread_routine(void *arg){
+void *thread_routine(void* arg){
     pthread_mutex_t *mutex = &data.mutex;
     int errflag = 0;
 
-    arges* ptr= (arges*)arg;
-
-    /*FILE* file = fopen(ptr->filename, "r");
-    if(!file){
-        printf("dont open variables");
-        return FAILURE;
-    }
-    printf("variables.txt opend\n");*/
+    args* ptr= (args*) arg;
+    // printf("In function thread id = %d\n",ptr->i);
     int i=0;
-    while (i+(ptr->i)/ptr->n < ptr->count_var) {
-        if (check_vars(ptr->predikat, ptr->data[i + (ptr->i) / ptr->n], ptr->count_var) == 1) {
-
-
+    int check;
+    int length=1;
+    while(ptr->var_pred->predikat->logic[length-1]!=3){
+        // printf("s");
+        length++;
+    }
+    // printf("In function thread id = %d\n length of predicat %d\n",ptr->i,length);
+    while (i*(ptr->n)+(ptr->i) < ptr->var_pred->count_var) {
+        check =check_vars(ptr->var_pred->predikat, ptr->var_pred->vars[i*(ptr->n) + ptr->i], length);
+        // printf("ptr %d of %ld check:%d\n",ptr->var_pred->vars[i*(ptr->n) + ptr->i],ptr->var_pred->count_var,check);
+        if (check == 1) {
+        // if (1 == 1){
             // lock mutex before value change
             errflag = pthread_mutex_lock(mutex);
             // check if pthread_mutex_lock call was successful
@@ -140,7 +144,7 @@ int fill_predikate(char *str,predikate* predikat) {
     size_t length;
     size_t i =0;
     char* pred;
-    printf("predicate:");
+    // printf("predicate:");
     for (size_t j = 0;j<count;j++){
         length=0;
         while (str[i]!=')'){
@@ -157,43 +161,43 @@ int fill_predikate(char *str,predikate* predikat) {
         if(str[i]!='\0') {
             i++;
             if (str[i] == '&') {
-                printf(" && ");
+                // printf(" && ");
                 predikat->logic[j] = 1;
             } else {
-                printf(" || ");
+                // printf(" || ");
                 predikat->logic[j] = 2;
             }
         }
         i+=3;
     }
-    printf("\n");
+    // printf("\n");
     predikat->logic[count-1] = 3;
     return  SUCCESS;
 }
 int create_predikate(char *str,predikate* node,int count){
     size_t i =3;
     if ((str[i] == '<') && (str[i + 1] == ' ')) {
-        printf("(X < ");
+        // printf("(X < ");
         node->comparison[count]=1;
         i += 2;
     } else {
         if ((str[i] == '>') && (str[i + 1] == ' ')) {
-            printf("(X > ");
+            // printf("(X > ");
             node->comparison[count]=2;
             i += 2;
         } else {
             if ((str[i] == '=') && (str[i + 1] == ' ')) {
-                printf("(X = ");
+                // printf("(X = ");
                 node->comparison[count]=3;
                 i += 2;
             } else {
                 if ((str[i] == '<') && (str[i + 1] == '=')) {
-                    printf("(X <= ");
+                    // printf("(X <= ");
                     node->comparison[count]=4;
                     i += 3;
                 } else {
                     if ((str[i] == '>') && (str[i + 1] == '=')) {
-                        printf("(X >= ");
+                        // printf("(X >= ");
                         node->comparison[count]=5;
                         i += 3;
                     }
@@ -211,7 +215,7 @@ int create_predikate(char *str,predikate* node,int count){
     }
     buff[length]='\0';
     node->value[count] = atoi(buff);
-    printf("%d)",node->value[count]);
+    // printf("%d)",node->value[count]);
     return  SUCCESS;
 }
 //  считаем количество x
@@ -222,11 +226,11 @@ size_t count_var(char* str){
         if (str[i]=='('){
             count++;
         }
-//        printf("Counting... str[i]:%c count:%d \n",str[i],count);
+        // printf("Counting... str[i]:%c count:%d \n",str[i],count);
         i++;
     }
 
-//    printf("Counted! count:%d \n",count);
+    // printf("Counted! count:%d \n",count);
     return count;
 }
 //  считываем числа
@@ -237,14 +241,13 @@ int read_var(FILE* file,arges* arg){
     if (feof(file)){
         return  FAILURE;
     }
-    printf("file open in rv\n");
+    //printf("file open in rv\n");
     char *str;
     char buff;
     char *tmp;
     arg->count_var=0;
     while (buff !=EOF) {
-        
-        printf("read next\n");
+        // printf("read next\n");
         size_t length;
         length = 1;
         str = malloc(sizeof(char));
@@ -262,13 +265,13 @@ int read_var(FILE* file,arges* arg){
             buff = (char) fgetc(file);
         }
         int var = atoi(str);
-        printf("var %d ",var);
-        arg->data= realloc(arg->data, sizeof(int) * (arg->count_var + 1));
-        arg->data[arg->count_var]=var;
+        // printf("var %d ",var);
+        arg->vars= realloc(arg->vars, sizeof(int) * (arg->count_var + 1));
+        arg->vars[arg->count_var]=var;
         arg->count_var++;
-        printf("readed\n");
+        // printf("readed\n");
     }
-    
+    // printf("readed\n");
     return SUCCESS;
 }
 
@@ -372,25 +375,22 @@ int start(char* predicat_file,char* variables_file){
     printf("variables.txt opend\n");
     arges* arg= malloc(sizeof(arges));
     if(read_var(file,arg)==FAILURE) {
+        printf("fail\n");
         return FAILURE;
     }
-    size_t varcount = arg->count_var;
-    printf("readed %ld vars\n",varcount);
-    // for (size_t j =0;j<varcount;j++){
-    //     // printf("var %ld of %ld :",j,arg->count_var);
-    //     // printf(" %d \n",arg->data[j]);
-    //     printf("* ");
-    // }
-    printf("dd");
+    arg->predikat=predikat;
     int N = 4; // потом исправить кол-во потоков
-    arg->n=N;
+    args ptr[N]; 
     pthread_t threadIds[N];
-    for (int i = 0; i < N; i++) {
-        arg->i=i;
-        int errflag = pthread_create(&threadIds[i], NULL, thread_routine, (void*)arg);
+    for (int j = 0; j < N; j++) {
+        ptr[j].var_pred = arg;
+        ptr[j].n = N;
+        ptr[j].i =j;
+        int errflag = pthread_create(&threadIds[j], NULL, thread_routine, (void *)&ptr[j]);
         if (errflag != 0) {
             printf("Caught error when create: %d\n", errflag);
         }
+        // sleep(2);
     }
     for (int i = 0; i < N; i++) {
         int errflag = pthread_join(threadIds[i], NULL);
@@ -399,5 +399,6 @@ int start(char* predicat_file,char* variables_file){
         }
     }
     printf("result count: %d\n", data.value);
+    // pthread_exit(NULL);
     return data.value;
 }
