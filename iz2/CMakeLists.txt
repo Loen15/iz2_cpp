@@ -4,7 +4,7 @@ project(iz2 C)
 set(CMAKE_C_STANDARD 99)
 
 option(STREAMS "Do u wanna use lib with strems" OFF)
-option(TEST "Do u wanna use lib with strems" OFF)
+option(TEST "Do u wanna use lib with strems" oFF)
 
 if (STREAMS)
     add_subdirectory(dinamic_lib)
@@ -39,7 +39,7 @@ endif()
 
 if (TEST)
     if (STREAMS)
-
+        add_subdirectory(din_tests)
     else()
         add_subdirectory(stat_tests)
     endif()
