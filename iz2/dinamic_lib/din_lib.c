@@ -10,20 +10,14 @@ void *thread_routine(void* arg){
     int errflag = 0;
 
     args* ptr= (args*) arg;
-    // printf("In function thread id = %d\n",ptr->i);
+    printf("In function thread id = %d\n",ptr->i);
     int i=0;
-    int check;
     int length=1;
     while(ptr->var_pred->predikat->logic[length-1]!=3){
-        // printf("s");
         length++;
     }
-    // printf("In function thread id = %d\n length of predicat %d\n",ptr->i,length);
     while (i*(ptr->n)+(ptr->i) < ptr->var_pred->count_var) {
-        check =check_vars(ptr->var_pred->predikat, ptr->var_pred->vars[i*(ptr->n) + ptr->i], length);
-        // printf("ptr %d of %ld check:%d\n",ptr->var_pred->vars[i*(ptr->n) + ptr->i],ptr->var_pred->count_var,check);
-        if (check == 1) {
-        // if (1 == 1){
+        if (check_vars(ptr->var_pred->predikat, ptr->var_pred->vars[i*(ptr->n) + ptr->i], length) == 1) {
             // lock mutex before value change
             errflag = pthread_mutex_lock(mutex);
             // check if pthread_mutex_lock call was successful
