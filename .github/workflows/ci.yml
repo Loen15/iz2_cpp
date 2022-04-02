@@ -18,17 +18,17 @@ jobs:
       - uses: actions/checkout@v2
       - run: make packages && make stat-build && make stat-test && make stat-report
       - name: coveralls
-      uses: coverallsapp/github-action@master
-          with:
-            github-token: ${{ secrets.GITHUB_TOKEN }}
-            path-to-lcov: coverage.info
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: coverage.info
       - name: Coveralls GitHub Action
         uses: coverallsapp/github-action@master
-          with:
-            github-token: ${{ secrets.GITHUB_TOKEN }}
-            path-to-lcov: iz2/build/coverage.info
-            flag-name: stat
-            parallel: true
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: iz2/build/coverage.info
+          flag-name: stat
+          parallel: true
   din-build:
     runs-on: ubuntu-latest
     steps:
@@ -41,17 +41,17 @@ jobs:
       - uses: actions/checkout@v2
       - run: make packages && make din-build && make din-test && make din-report
       - name: coveralls
-      uses: coverallsapp/github-action@master
+        uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: coverage.info
       - name: Coveralls GitHub Action
         uses: coverallsapp/github-action@master
-          with:
-            github-token: ${{ secrets.GITHUB_TOKEN }}
-            path-to-lcov: iz2/build/coverage.info
-            flag-name: din
-            parallel: true
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: iz2/build/coverage.info
+          flag-name: din
+          parallel: true
   finish:
     if: ${{ always() }}
     needs: [stat-test, din-test]
