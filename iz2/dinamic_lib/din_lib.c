@@ -269,8 +269,8 @@ int read_var(FILE *file, arges *arg) {
         arg->vars[arg->count_var] = var;
         arg->count_var++;
         // printf("readed\n");
+        free(str);
     }
-    free(str);
     // printf("readed\n");
     return SUCCESS;
 }
