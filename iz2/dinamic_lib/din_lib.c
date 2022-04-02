@@ -7,7 +7,7 @@ data_t data = {PTHREAD_MUTEX_INITIALIZER, 0};
 
 void *thread_routine(void *arg) {
     pthread_mutex_t *mutex = &data.mutex;
-    int errflag = 0;
+    int errflag;
 
     args *ptr = (args *)arg;
     printf("In function thread id = %d\n", ptr->i);
@@ -132,17 +132,15 @@ int fill_predikate(char *str, predikate *predikat) {
     predikat->comparison = malloc(sizeof(char) * count);
     predikat->value = malloc(sizeof(int) * count);
     predikat->logic = malloc(sizeof(char) * count);
-    size_t length;
     size_t i = 0;
-    char *pred;
     // printf("predicate:");
     for (size_t j = 0; j < count; j++) {
-        length = 0;
+        size_t length = 0;
         while (str[i] != ')') {
             i++;
             length++;
         }
-        pred = malloc(sizeof(char) * (length + 2));
+        char *pred = malloc(sizeof(char) * (length + 2));
         for (size_t k = 0; k < length + 1; k++) {
             pred[k] = str[i - length + k];
         }
@@ -233,15 +231,14 @@ int read_var(FILE *file, arges *arg) {
         return FAILURE;
     }
     // printf("file open in rv\n");
-    char *str;
-    char buff;
+    char buff = 't';
     char *tmp;
     arg->count_var = 0;
     while (buff != EOF) {
         // printf("read next\n");
         size_t length;
         length = 1;
-        str = malloc(sizeof(char));
+        char *str = malloc(sizeof(char));
         str[0] = '\0';
         buff = (char)fgetc(file);
 
@@ -270,9 +267,8 @@ int read_var(FILE *file, arges *arg) {
 int check_vars(predikate *predikat, int var, int count) {
     // printf("count in cheking %d\n",count);
     int prev = check_var(predikat, var, 0);
-    int curr;
     for (int i = 1; i < count; i++) {
-        curr = check_var(predikat, var, i);
+        int curr = check_var(predikat, var, i);
         // 1 - &&
         // 2 - ||
         if (predikat->logic[i - 1] == 1) {
