@@ -391,7 +391,8 @@ int start(char *predicat_file, char *variables_file) {
         return FAILURE;
     }
     arg->predikat = predikat;
-    int N = sysconf(_SC_NPROCESSORS_ONLN);
+    long N = sysconf(_SC_NPROCESSORS_ONLN);
+    printf("count of proc %ld\n", N);
     if (N == -1) {
         N = 4;
     }
