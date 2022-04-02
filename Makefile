@@ -20,7 +20,7 @@ stat-test:
 	valgrind --tool=memcheck --leak-check=yes ./build/tests/tests
 
 stat-report:
-	lcov -t "build/tests/tests" -o coverage.info -c -d build/static_lib
+	lcov -t "build/tests/tests" -o coverage.info -c -d build/static_lib/
 
 din-build:
 	mkdir build && \
@@ -32,4 +32,4 @@ din-test:
 	valgrind --tool=memcheck --leak-check=yes ./build/tests/tests
 
 din-report:
-	lcov -t "build/tests/tests" -o coverage.info -c -d build/dinamic_lib
+	lcov -t "build/tests/tests" -o coverage.info -c -d build/dinamic_lib/
