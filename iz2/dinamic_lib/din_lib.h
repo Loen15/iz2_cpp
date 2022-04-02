@@ -1,5 +1,5 @@
-#ifndef IZ2_DIN_LIB_H_
-#define IZ2_DIN_LIB_H_
+#ifndef IZ2_DINAMIC_LIB_DIN_LIB_H_
+#define IZ2_DINAMIC_LIB_DIN_LIB_H_
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,7 +31,7 @@ typedef struct {
     int n; // кол-во потоков
 } args;
 
-//потоки
+// потоки
 typedef struct {
     pthread_mutex_t mutex; // mutex for value protection
     int value;             // protected value
@@ -55,4 +55,4 @@ int check_vars(predikate *predikat, int var, int count);
 int check_var(predikate *predikat, int var, int count);
 //  стартуем
 int start(char *predicat_file, char *variables_file);
-#endif // IZ2_DIN_LIB_H_
+#endif // IZ2_DINAMIC_LIB_DIN_LIB_H_

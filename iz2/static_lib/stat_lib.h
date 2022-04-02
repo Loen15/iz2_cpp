@@ -1,5 +1,5 @@
-#ifndef IZ2_STAT_LIB_H_
-#define IZ2_STAT_LIB_H_
+#ifndef IZ2_STATIC_LIB_STAT_LIB_H_
+#define IZ2_STATIC_LIB_STAT_LIB_H_
 #include <stdio.h>
 #include <stdlib.h>
 typedef struct {
@@ -32,4 +32,4 @@ int check_vars(predikate *predikat, int var, int count);
 int check_var(predikate *predikat, int var, int count);
 //  стартуем
 int start(char *predicat_file, char *variables_file);
-#endif // IZ2_STAT_LIB_H_
+#endif //  IZ2_STATIC_LIB_STAT_LIB_H_

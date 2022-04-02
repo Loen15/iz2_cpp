@@ -66,7 +66,6 @@ char *read_predicate(FILE *file) {
 }
 //  проверяем корректность
 int check(char *str) {
-
     size_t length = 0;
     while (str[length] != '\0') {
         length++;
@@ -297,15 +296,17 @@ int check_var(predikate *predikat, int var, int count) {
         // printf("%d < %d?\n",var,predikat->value[count]);
         if (var < predikat->value[count]) {
             return 1;
-        } else
+        } else {
             return 0;
+        }
     }
     if (predikat->comparison[count] == 2) {
         // printf("%d > %d?\n",var,predikat->value[count]);
         if (var > predikat->value[count]) {
             return 1;
-        } else
+        } else {
             return 0;
+        }
     }
     if (predikat->comparison[count] == 3) {
 
@@ -314,22 +315,25 @@ int check_var(predikate *predikat, int var, int count) {
             return 1;
         }
 
-        else
+        else {
             return 0;
+        }
     }
     if (predikat->comparison[count] == 4) {
         // printf("%d <= %d?\n",var,predikat->value[count]);
         if (var <= predikat->value[count]) {
             return 1;
-        } else
+        } else {
             return 0;
+        }
     }
     if (predikat->comparison[count] == 5) {
         // printf("%d >= %d?\n",var,predikat->value[count]);
         if (var >= predikat->value[count]) {
             return 1;
-        } else
+        } else {
             return 0;
+        }
     }
     return FAILURE;
 }
