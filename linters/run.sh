@@ -28,6 +28,6 @@ print_header "RUN clang-tidy"
 check_log "clang-tidy iz2/static_lib/*.c iz2/dinamic_lib/*.h -extra-arg=-std=c99 -- -Istart" "Error (?:reading|while processing)"
 
 print_header "RUN cpplint"
-check_log "cpplint --extensions=c --filter=-runtime/arrays iz2/static_lib/*.h iz2/static_lib/*.c iz2/*.c" "Can't open for reading"
+check_log "cpplint --extensions=c --filter=-runtime/arrays iz2/static_lib/*.h iz2/static_lib/*.c iz2/dinamic_lib/*.h iz2/dinamic_lib/*.c iz2/*.c" "Can't open for reading"
 
 print_header "SUCCESS"
