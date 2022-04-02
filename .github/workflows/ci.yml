@@ -1,0 +1,40 @@
+on: pull_request
+
+jobs:
+  analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: make packages && make analysis
+  stat-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: make packages && make stat-build
+  stat-test:
+    runs-on: ubuntu-latest
+    needs: [stat-build]
+    steps:
+      - uses: actions/checkout@v2
+      - run: make packages && make stat-build && make stat-test && make stat-report
+      - name: coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: coverage.info
+  din-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: make packages && make din-build
+  din-test:
+    runs-on: ubuntu-latest
+    needs: [din-build]
+    steps:
+      - uses: actions/checkout@v2
+      - run: make packages && make din-build && make din-test && make din-report
+      - name: coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: coverage.info

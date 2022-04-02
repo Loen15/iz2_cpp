@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+set -o pipefail
+
+function print_header() {
+    echo -e "\n***** ${1} *****"
+}
+
+function check_log() {
+    LOG=$( { ${1}; } 2>&1 )
+    STATUS=$?
+    echo "$LOG"
+    if echo "$LOG" | grep -q -E "${2}"
+    then
+        exit 1
+    fi
+
+    if [ $STATUS -ne 0 ]
+    then
+        exit $STATUS
+    fi
+}
+
+print_header "RUN cppcheck"
+check_log "cppcheck iz2 --enable=all --inconclusive --error-exitcode=1 -I iz2/static_lib iz2/dinamic_lib --suppress=missingIncludeSystem" "\(information\)"
+
+print_header "RUN clang-tidy"
+check_log "clang-tidy iz2/static_lib/*.c iz2/dinamic_lib/*.c -extra-arg=-std=c99 -- -Istart" "Error (?:reading|while processing)"
+
+print_header "RUN cpplint"
+check_log "cpplint --extensions=c --filter=-runtime/arrays iz2/static_lib/*.h iz2/static_lib/*.c iz2/dinamic_lib/*.h iz2/dinamic_lib/*.c iz2/*.c" "Can't open for reading"
+
+print_header "SUCCESS"
