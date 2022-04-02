@@ -25,7 +25,7 @@ stat-report:
 din-build:
 	mkdir build && \
 	cd build && \
-	cmake -DTESTS=ON -DSTREAMS=ON -pthread ../iz2 && \
+	cmake -DTESTS=ON -DSTREAMS=ON ../iz2 && \
 	make
 din-test:
 	./build/tests/tests && \
