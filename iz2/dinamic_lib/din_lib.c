@@ -416,6 +416,9 @@ int start(char *predicat_file, char *variables_file) {
         }
     }
     printf("result count: %d\n", data.value);
+    free(str);
+    free(predikat);
+    free(arg);
     // pthread_exit(NULL);
     return data.value;
 }
