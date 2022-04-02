@@ -22,7 +22,7 @@ function check_log() {
 }
 
 print_header "RUN cppcheck"
-check_log "cppcheck iz2 --enable=all --inconclusive --error-exitcode=1 -I iz2/static_lib --suppress=missingIncludeSystem" "\(information\)"
+check_log "cppcheck iz2 --enable=all --inconclusive --error-exitcode=1 -I iz2/static_lib iz2/dinamic_lib --suppress=missingIncludeSystem" "\(information\)"
 
 print_header "RUN clang-tidy"
 check_log "clang-tidy iz2/static_lib/*.c iz2/dinamic_lib/*.h -extra-arg=-std=c99 -- -Istart" "Error (?:reading|while processing)"
