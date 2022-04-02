@@ -309,13 +309,10 @@ int check_var(predikate *predikat, int var, int count) {
         }
     }
     if (predikat->comparison[count] == 3) {
-
         // printf("%d = %d?\n",var,predikat->value[count]);
         if (var == predikat->value[count]) {
             return 1;
-        }
-
-        else {
+        } else {
             return 0;
         }
     }
