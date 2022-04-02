@@ -385,6 +385,7 @@ int start(char *predicat_file, char *variables_file) {
         printf("fail\n");
         free(arg);
         free(str);
+        free(predikat);
         fclose(predicat);
         fclose(file);
         return FAILURE;
