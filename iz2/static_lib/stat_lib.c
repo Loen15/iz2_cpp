@@ -18,6 +18,7 @@ char *read_predicate(FILE *file) {
     while (buff != '\n' && buff != EOF) {
         tmp = realloc(str, sizeof(char) * (++length));
         if (!tmp) {
+            free(str);
             return FAILURE;
         }
         str = tmp;
@@ -93,6 +94,9 @@ int check(char *str) {
 //  заполняем дерево предиката
 int fill_predikate(char *str, predikate *predikat) {
     size_t count = count_var(str);
+    if (count == 0) {
+        return FAILURE;
+    }
     predikat->comparison = malloc(sizeof(char) * count);
     predikat->value = malloc(sizeof(int) * count);
     predikat->logic = malloc(sizeof(char) * count);
@@ -213,6 +217,7 @@ int read_var(FILE *file) {
         buff = (char)fgetc(file);
     }
     int var = atoi(str);
+    free(str);
     return var;
 }
 
@@ -295,6 +300,7 @@ int start(char *predicat_file, char *variables_file) {
     printf("predicat.txt opend\n");
     char *str = read_predicate(predicat);
     if (str == FAILURE) {
+        free(str);
         fclose(predicat);
         return FAILURE;
     }
