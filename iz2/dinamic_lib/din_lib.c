@@ -391,7 +391,10 @@ int start(char *predicat_file, char *variables_file) {
         return FAILURE;
     }
     arg->predikat = predikat;
-    int N = 4; // потом исправить кол-во потоков
+    int N = sysconf(_SC_NPROCESSORS_ONLN);
+    if (N == -1) {
+        N = 4;
+    }
     args ptr[N];
     pthread_t threadIds[N];
     for (int j = 0; j < N; j++) {
