@@ -236,6 +236,7 @@ int read_var(FILE *file, arges *arg) {
     // printf("file open in rv\n");
     char buff = 't';
     char *tmp;
+    arg->vars = malloc(sizeof(int));
     arg->count_var = 0;
     while (buff != EOF) {
         // printf("read next\n");
@@ -380,6 +381,10 @@ int start(char *predicat_file, char *variables_file) {
     arges *arg = malloc(sizeof(arges));
     if (read_var(file, arg) == FAILURE) {
         printf("fail\n");
+        free(arg);
+        free(str);
+        fclose(predicat);
+        fclose(file);
         return FAILURE;
     }
     arg->predikat = predikat;
