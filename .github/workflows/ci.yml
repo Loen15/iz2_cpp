@@ -26,7 +26,7 @@ jobs:
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: iz2/build/coverage.info
+          path-to-lcov: iz2/build/static_lib/coverage.info
           flag-name: stat
           parallel: true
   din-build:
@@ -49,7 +49,7 @@ jobs:
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: iz2/build/coverage.info
+          path-to-lcov: iz2/build/dinamic_lib/coverage.info
           flag-name: din
           parallel: true
   finish:
