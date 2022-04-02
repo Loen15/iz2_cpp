@@ -54,6 +54,7 @@ char *read_predicate(FILE *file) {
     while (buff != '\n' && buff != EOF) {
         tmp = realloc(str, sizeof(char) * (++length));
         if (!tmp) {
+            free(str);
             return FAILURE;
         }
         str = tmp;
@@ -128,6 +129,9 @@ int check(char *str) {
 //  заполняем дерево предиката
 int fill_predikate(char *str, predikate *predikat) {
     size_t count = count_var(str);
+    if (count == 0) {
+        return FAILURE;
+    }
     predikat->comparison = malloc(sizeof(char) * count);
     predikat->value = malloc(sizeof(int) * count);
     predikat->logic = malloc(sizeof(char) * count);
@@ -244,6 +248,7 @@ int read_var(FILE *file, arges *arg) {
         while (buff != ' ' && buff != EOF) {
             tmp = realloc(str, sizeof(char) * (++length));
             if (!tmp) {
+                free(str);
                 return FAILURE;
             }
             str = tmp;
@@ -253,7 +258,13 @@ int read_var(FILE *file, arges *arg) {
         }
         int var = atoi(str);
         // printf("var %d ",var);
-        arg->vars = realloc(arg->vars, sizeof(int) * (arg->count_var + 1));
+        int *tmp;
+        tmp = realloc(arg->vars, sizeof(int) * (arg->count_var + 1));
+        if (!tmp) {
+            free(str);
+            return FAILURE;
+        }
+        arg->vars = tmp;
         arg->vars[arg->count_var] = var;
         arg->count_var++;
         // printf("readed\n");
@@ -344,11 +355,13 @@ int start(char *predicat_file, char *variables_file) {
     printf("predicat.txt opend\n");
     char *str = read_predicate(predicat);
     if (str == FAILURE) {
+        free(str);
         fclose(predicat);
         return FAILURE;
     }
     printf("curr predicat: %s\n", str);
     if (!check(str)) {
+        free(str);
         fclose(predicat);
         return FAILURE;
     }
@@ -358,6 +371,8 @@ int start(char *predicat_file, char *variables_file) {
     printf("predicate created\n");
     FILE *file = fopen(variables_file, "r");
     if (!file) {
+        free(str);
+        fclose(predicat);
         printf("dont open variables");
         return FAILURE;
     }
