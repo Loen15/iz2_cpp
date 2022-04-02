@@ -209,6 +209,7 @@ int read_var(FILE *file) {
     while (buff != ' ' && buff != EOF) {
         tmp = realloc(str, sizeof(char) * (++length));
         if (!tmp) {
+            free(str);
             return FAILURE;
         }
         str = tmp;
@@ -306,6 +307,7 @@ int start(char *predicat_file, char *variables_file) {
     }
     printf("curr predicat: %s\n", str);
     if (!check(str)) {
+        free(str);
         fclose(predicat);
         return FAILURE;
     }
@@ -316,6 +318,7 @@ int start(char *predicat_file, char *variables_file) {
     int var;
     FILE *file = fopen(variables_file, "r");
     if (!file) {
+        fclose(predicat);
         printf("dont open variables");
         return FAILURE;
     }
