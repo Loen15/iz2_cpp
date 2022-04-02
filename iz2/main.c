@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include "static_lib/stat_lib.h"
 #include "dinamic_lib/din_lib.h"
 
 int main() {
