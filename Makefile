@@ -14,9 +14,6 @@ stat-build:
 	cd build && \
 	cmake -DTESTS=ON ../iz2 && \
 	make
-stat-analysis:
-	chmod +x ./linters/run.sh &&\
-	./linters/run.sh
 
 stat-test:
 	./build/tests/tests && \
@@ -28,7 +25,7 @@ stat-report:
 din-build:
 	mkdir build && \
 	cd build && \
-	cmake -DTESTS=ON -DSTREAMS=ON -pthread ../untitled && \
+	cmake -DTESTS=ON -DSTREAMS=ON -pthread ../iz2 && \
 	make
 din-test:
 	./build/tests/tests && \
