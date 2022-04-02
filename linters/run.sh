@@ -22,13 +22,12 @@ function check_log() {
 }
 
 print_header "RUN cppcheck"
-check_log "cppcheck untitled --enable=all --inconclusive --error-exitcode=1 -I untitled/start --suppress=missingIncludeSystem" "\(information\)"
+check_log "cppcheck iz2 --enable=all --inconclusive --error-exitcode=1 -I iz2/static_lib --suppress=missingIncludeSystem" "\(information\)"
 
 print_header "RUN clang-tidy"
-#check_log "clang-tidy untitled/start/*.c untitled/start/*.h -warnings-as-errors=* -extra-arg=-std=c99 -- -Istart" "Error (?:reading|while processing)"
-check_log "clang-tidy untitled/start/*.c untitled/start/*.h -extra-arg=-std=c99 -- -Istart" "Error (?:reading|while processing)"
+check_log "clang-tidy iz2/static_lib/*.c iz2/static_lib/*.h -extra-arg=-std=c99 -- -Istart" "Error (?:reading|while processing)"
 
 print_header "RUN cpplint"
-check_log "cpplint --extensions=c --filter=-runtime/arrays untitled/start/*.h untitled/start/*.c untitled/*.c" "Can't open for reading"
+check_log "cpplint --extensions=c --filter=-runtime/arrays iz2/static_lib/*.h iz2/static_lib/*.c iz2/*.c" "Can't open for reading"
 
 print_header "SUCCESS"
