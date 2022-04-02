@@ -270,6 +270,7 @@ int read_var(FILE *file, arges *arg) {
         arg->count_var++;
         // printf("readed\n");
     }
+    free(str);
     // printf("readed\n");
     return SUCCESS;
 }
@@ -373,6 +374,7 @@ int start(char *predicat_file, char *variables_file) {
     FILE *file = fopen(variables_file, "r");
     if (!file) {
         free(str);
+        free(predikat);
         fclose(predicat);
         printf("dont open variables");
         return FAILURE;
