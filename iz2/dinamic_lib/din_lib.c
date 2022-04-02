@@ -258,13 +258,13 @@ int read_var(FILE *file, arges *arg) {
         }
         int var = atoi(str);
         // printf("var %d ",var);
-        int *tmp;
-        tmp = realloc(arg->vars, sizeof(int) * (arg->count_var + 1));
-        if (!tmp) {
+        int *tmp2;
+        tmp2 = realloc(arg->vars, sizeof(int) * (arg->count_var + 1));
+        if (!tmp2) {
             free(str);
             return FAILURE;
         }
-        arg->vars = tmp;
+        arg->vars = tmp2;
         arg->vars[arg->count_var] = var;
         arg->count_var++;
         // printf("readed\n");
